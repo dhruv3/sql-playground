@@ -63,3 +63,49 @@ LEFT(s,n) allows you to extract n characters from the start of the string s.
 ```sql
 LEFT('Hello world', 4) -> 'Hell'
 ```
+## Lesson 3: SELECT from NAME tutorial
+### ORDER BY clause
+Default ORDER BY is `asc`
+```sql
+select winner, yr, subject
+from nobel
+where winner like 'Sir%'
+order by yr desc, winner
+```
+**Note:** The expression `subject IN ('Chemistry','Physics')` can be used as a value - it will be `0` or `1`.
+### ORDER BY CASE clause
+```sql
+SELECT * FROM Country
+ORDER BY CASE WHEN cname='other' THEN 1 ELSE 0 END
+```
+Applying ORDER BY clause with CASE tweaks the "Other" option and places it at the bottom.
+## Lesson 4: SELECT within SELECT Tutorial
+### CONCAT
+```sql
+select name, CONCAT(ROUND(population*100/(select population from world where name = 'Germany'),0), '%')
+from world
+where continent = 'Europe'
+```
+There can be more than 2 args for `CONCAT` function.
+### ALL Clause
+```sql
+SELECT name
+  FROM world
+ WHERE population >= ALL(SELECT population
+                           FROM world
+                          WHERE population>0)
+```
+The word `ALL` to allow >= or > or < or <= to act over a **list**.
+### Correlated Subqueries
+A correlated subquery works like a nested loop: the subquery only has access to rows related to a single record at a time in the outer query. The technique relies on table aliases to identify two different uses of the same table, one in the outer query and the other in the subquery.
+
+One way to interpret the line in the WHERE clause that references the two table is “… where the correlated values are the same”.
+
+In the example provided, you would say “select the country details from world where the population is greater than or equal to the population of all countries where the continent is the same”.
+```sql
+SELECT continent, name, population FROM world x
+  WHERE population >= ALL
+    (SELECT population FROM world y
+        WHERE y.continent=x.continent
+          AND population>0)
+```
