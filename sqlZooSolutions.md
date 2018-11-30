@@ -109,3 +109,24 @@ SELECT continent, name, population FROM world x
         WHERE y.continent=x.continent
           AND population>0)
 ```
+## Lesson 5: SUM and COUNT
+The functions `SUM`, `COUNT`, `MAX` and `AVG` are "aggregates", each may be applied to a numeric attribute resulting in a single row being returned by the query. (These functions are even more useful when used with the `GROUP BY` clause.)
+
+By including a `GROUP BY` clause, functions such as `SUM` and `COUNT` are applied to groups of items sharing values. When you specify `GROUP BY` continent the result is that you get only one row for each different value of continent. All the other columns must be **"aggregated"** by one of SUM, COUNT ...
+
+The `WHERE` filter takes place before the aggregating function.
+
+The `HAVING` clause is tested after the `GROUP BY`. The `HAVING` clause allows us to filter the groups which are displayed. The `WHERE` clause filters rows before the aggregation, the `HAVING` clause filters after the aggregation.
+```sql
+SELECT continent, SUM(population)
+  FROM world
+ GROUP BY continent
+HAVING SUM(population)>500000000
+```
+
+**Problem:** Show the number of different winners for each subject.
+```sql
+select subject, count(distinct winner)
+from nobel
+group by subject
+```
