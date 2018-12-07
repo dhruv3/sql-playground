@@ -144,3 +144,68 @@ FROM game JOIN goal ON matchid = id
 WHERE (team1 = 'POL' OR team2 = 'POL')
 group by mdate,matchid
 ```
+## Lesson 7: More JOIN
+**Problem:** Selecting by joining three tables
+```sql
+select name
+from movie join casting on (movie.id = casting.movieid)
+join actor on (casting.actorid = actor.id)
+where movieid = 11768
+```
+**Problem:** Which were the busiest years for 'John Travolta', show the year and the number of movies he made each year for any year in which he made more than 2 movies.
+```sql
+SELECT yr,COUNT(title) FROM
+  movie JOIN casting ON movie.id=movieid
+         JOIN actor   ON actorid=actor.id
+where name='John Travolta'
+GROUP BY yr
+HAVING COUNT(title)=(SELECT MAX(c) FROM
+(SELECT yr,COUNT(title) AS c FROM
+   movie JOIN casting ON movie.id=movieid
+         JOIN actor   ON actorid=actor.id
+ where name='John Travolta'
+ GROUP BY yr) AS t
+)
+```
+**Problem:** List the film title and the leading actor for all of the films 'Julie Andrews' played in.
+
+This is broken into multiple subqueries which are then combined for the complete solution. Subqueries have been explained below:
+```sql
+--get id for the actress
+select id from actor
+where name='Julie Andrews
+```
+```sql
+--get ids of all movies which has the mentioned actress
+select movieid from casting
+where actorid in (
+select id from actor
+where name='Julie Andrews'
+)
+```
+```sql
+--final query that joins everything and provides the required answer
+select title, name
+from movie join casting on (movieid=movie.id and ord=1)
+join actor on (actorid=actor.id)
+where movie.id in (
+select movieid from casting
+where actorid in (
+select id from actor
+where name='Julie Andrews'
+)
+)
+```
+
+**Problem:** Obtain a list, in alphabetical order, of actors who've had at least 30 starring roles.
+```sql
+select distinct name
+from actor join casting on (id = actorid)
+where ord = 1
+group by actorid, name
+having count(name) >= 30
+order by name
+```
+**Note** check if while doing group by we need to mention all the columns we are selecting in the group by statement
+
+Left at Problem 14 of More JOIN section.
