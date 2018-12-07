@@ -110,7 +110,7 @@ SELECT continent, name, population FROM world x
           AND population>0)
 ```
 ## Lesson 5: SUM and COUNT
-The functions `SUM`, `COUNT`, `MAX` and `AVG` are "aggregates", each may be applied to a numeric attribute resulting in a single row being returned by the query. (These functions are even more useful when used with the `GROUP BY` clause.)
+The functions `SUM`, `COUNT`, `MAX` and `AVG` are "aggregates", each may be applied to a **numeric attribute** resulting in a single row being returned by the query. (These functions are even more useful when used with the `GROUP BY` clause.)
 
 By including a `GROUP BY` clause, functions such as `SUM` and `COUNT` are applied to groups of items sharing values. When you specify `GROUP BY` continent the result is that you get only one row for each different value of continent. All the other columns must be **"aggregated"** by one of SUM, COUNT ...
 
@@ -129,4 +129,18 @@ HAVING SUM(population)>500000000
 select subject, count(distinct winner)
 from nobel
 group by subject
+```
+## Lesson 6: JOIN
+```sql
+SELECT *
+  FROM game JOIN goal ON (id=matchid)
+```
+The **FROM** clause says to merge data from the goal table with that from the game table. The **ON** says how to figure out which rows in **game** go with which rows in **goal** - the **matchid** from **goal** must match **id** from **game**.
+
+**Problem:** For every match involving 'POL', show the matchid, date and the number of goals scored.
+```sql
+SELECT matchid,mdate, count(team1)
+FROM game JOIN goal ON matchid = id 
+WHERE (team1 = 'POL' OR team2 = 'POL')
+group by mdate,matchid
 ```
